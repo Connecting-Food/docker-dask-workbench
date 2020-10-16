@@ -37,8 +37,6 @@ services:
     env_file:
       - datastore/.env
       - postgres/.env
-    environment:
-      -
 
   datastore:
     image: minio/minio
