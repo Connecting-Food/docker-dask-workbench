@@ -26,3 +26,12 @@ services:
     environment:
       - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
 
+
+  datastore:
+    image: minio/minio
+    env_file:
+      - minion.env.default
+    volumes:
+      - data:/data
+    ports:
+      - "9000:9000"
