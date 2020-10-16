@@ -30,7 +30,7 @@ services:
   datastore:
     image: minio/minio
     env_file:
-      - minion.env.default
+      - minio.env.default
     volumes:
       - data:/data
     ports:
