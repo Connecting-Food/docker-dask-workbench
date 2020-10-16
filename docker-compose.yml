@@ -6,6 +6,12 @@ services:
     ports:
       - "8786:8786"
       - "8787:8787"
+    env_file:
+      - datastore/.env
+      - postgres/.env
+    depends_on:
+      - db
+      - datastore
 
   worker:
     image: daskdev/dask
@@ -13,6 +19,9 @@ services:
       "dask-worker",
       "tcp://scheduler:8786"
     ]
+    env_file:
+      - datastore/.env
+      - postgres/.env
     depends_on:
       - scheduler
 
@@ -20,18 +29,40 @@ services:
     image: daskdev/dask-notebook
     depends_on:
       - scheduler
-      - worker
+      - db
+      - datastore
     ports:
       - "8888:8888"
-    environment:
-      - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
 
+    env_file:
+      - datastore/.env
+      - postgres/.env
+    environment:
+      -
 
   datastore:
     image: minio/minio
+    command: [
+      "server",
+      "/datastore"
+    ]
     env_file:
-      - minio.env.default
+      - datastore/.env
     volumes:
-      - data:/data
+      - ./datastore:/datastore
     ports:
       - "9000:9000"
+
+  db:
+    image: mdillon/postgis
+    env_file:
+      - postgres/.env
+    volumes:
+      - ./postgres/pg_data:/var/lib/postgresql/datastore
+
+  db_admin:
+    image: adminer
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
