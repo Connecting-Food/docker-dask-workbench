@@ -1,43 +1,31 @@
-FROM python:3.8-alpine
+FROM python:3.8-slim
 MAINTAINER Nicolas Ramy <devops@darkelda.com>
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV DAGSTER_HOME /app
 
-# Extra repositories
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-
-RUN apk update \
-    && apk upgrade \
-    && apk add build-base linux-headers \
-                          gcc python3-dev \
-                          musl-dev \
-                          make \
-    && apk add jpeg-dev \
-               zlib-dev \
-               freetype-dev \
-               lcms2-dev \
-               openjpeg-dev \
-               tiff-dev \
-               tk-dev \
-               tcl-dev \
-               harfbuzz-dev \
-               fribidi-dev\
-               postgresql-dev \
-               openssl-dev \
-               libffi-dev \
-               git
+RUN apt-get update \
+    && apt-get upgrade \
+    && apt-get install -y gcc \
+                          python3-dev \
+                          libpq-dev \
+                          postgresql-client \
+                          postgresql-client-common
 
 RUN pip install --upgrade pip
 RUN pip install dagster \
                 dagster-dask \
                 dagster-postgres \
+                dagster-aws \
                 dagit
 
-RUN mkdir /app
-WORKDIR /app
-COPY . /app
+RUN mkdir $DAGSTER_HOME
+WORKDIR /$DAGSTER_HOME
+COPY . $DAGSTER_HOME
+RUN chmod +x $DAGSTER_HOME/entrypoint.sh
 
-VOLUME ["/app"]
+VOLUME ["$DAGSTER_HOME"]
 
-CMD ["dagit", "-h", "0.0.0.0", "-p", "3000"]
+EXPOSE 3000
+
+ENTRYPOINT ["ash", "$DAGSTER_HOME/entrypoint.sh"]
