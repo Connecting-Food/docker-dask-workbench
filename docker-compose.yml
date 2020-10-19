@@ -8,6 +8,8 @@ services:
       - db
       - datastore
       - scheduler
+    volumes:
+      - ./dagster:/app
 
   scheduler:
     image: daskdev/dask
@@ -42,7 +44,8 @@ services:
       - datastore
     ports:
       - "8888:8888"
-
+    volumes:
+      - ./notebook:/app
     env_file:
       - datastore/.env
       - postgres/.env
