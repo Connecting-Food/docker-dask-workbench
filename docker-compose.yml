@@ -5,11 +5,21 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - dagster_db
       - datastore
       - scheduler
     volumes:
-      - ./dagster:/app
+      - ./dagster:/dagster
+    env_file:
+      - datastore/.env
+      - dagster-db/.env
+
+  dagster_db:
+    image: postgres:10-alpine
+    env_file:
+      - dagster-db/.env
+    volumes:
+      - ./dagster-db/pg_data:/var/lib/postgresql/data
 
   scheduler:
     image: daskdev/dask
@@ -68,7 +78,7 @@ services:
     env_file:
       - postgres/.env
     volumes:
-      - ./postgres/pg_data:/var/lib/postgresql/datastore
+      - ./postgres/pg_data:/var/lib/postgresql/data
 
   db_admin:
     image: adminer

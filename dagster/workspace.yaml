@@ -1,2 +1,4 @@
 load_from:
-  - python_module: pipelines
+  - python_file:
+      relative_path: hello/repo.py
+      location_name: hello

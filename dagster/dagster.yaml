@@ -12,7 +12,8 @@ run_storage:
         env: POSTGRES_PASSWORD
       hostname:
         env: POSTGRES_HOSTNAME
-      db_name: dagster
+      db_name:
+        env: POSTGRES_DB
       port:
         env: POSTGRES_PORT
 
@@ -27,7 +28,8 @@ event_log_storage:
         env: POSTGRES_PASSWORD
       hostname:
         env: POSTGRES_HOSTNAME
-      db_name: dagster
+      db_name:
+        env: POSTGRES_DB
       port:
         env: POSTGRES_PORT
 
@@ -42,7 +44,8 @@ schedule_storage:
         env: POSTGRES_PASSWORD
       hostname:
         env: POSTGRES_HOSTNAME
-      db_name: dagster
+      db_name:
+        env: POSTGRES_DB
       port:
         env: POSTGRES_PORT
 
@@ -51,11 +54,10 @@ compute_logs:
   class: S3ComputeLogManager
   config:
     bucket: "dagster-compute-logs"
-    prefix: "dagster-test-"
     endpoint_url: "http://datastore:9000"
 
 local_artifact_storage:
   module: dagster.core.storage.root
   class: LocalArtifactStorage
   config:
-    base_dir: "/app/output/"
+    base_dir: "/dagster/output/"
