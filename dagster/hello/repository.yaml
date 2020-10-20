@@ -1,0 +1,3 @@
+repository:
+  module: hello
+  fn: hello_world_repository

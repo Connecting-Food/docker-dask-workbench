@@ -54,7 +54,7 @@ compute_logs:
   class: S3ComputeLogManager
   config:
     bucket: "dagster-compute-logs"
-    endpoint_url: "http://datastore:9000"
+    endpoint_url: "http://minio:9000"
 
 local_artifact_storage:
   module: dagster.core.storage.root
