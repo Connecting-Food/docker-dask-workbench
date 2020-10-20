@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+
+  workflow_dispatch:
+
+jobs:
+  lint-dagster-dockerfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Lint Dockerfile
+        run: |
+          docker run \
+            --rm \
+            -v "$PWD"/dagster/Dockerfile:/dockerfilelinter/Dockerfile \
+            petitnuage/dockerfile-linter:latest \
+            linter \
+            -i EC0001,EF0004,ER0001,ER0007,ER0012 \
+            -f Dockerfile
+
+  validate-docker-compose-configuration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Validate docker-compose configuration
+        run: docker-compose config
