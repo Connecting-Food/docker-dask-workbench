@@ -3,6 +3,7 @@ LABEL maintainer="nicolas.ramy@connecting-food.com"
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV DAGSTER_HOME /dagster
+ENV DAGSTER_VERSION 0.9.15
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -13,12 +14,11 @@ RUN apt-get update \
                     postgresql-client-common \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-RUN pip install dagster \
-                dagster-dask \
-                dagster-postgres \
-                dagster-aws \
-                dagit
+RUN pip install dagster==${DAGSTER_VERSION} \
+                dagster-dask==${DAGSTER_VERSION} \
+                dagster-postgres==${DAGSTER_VERSION} \
+                dagster-aws==${DAGSTER_VERSION} \
+                dagit==${DAGSTER_VERSION}
 
 RUN mkdir /dagster
 WORKDIR /dagster
