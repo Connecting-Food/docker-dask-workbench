@@ -22,7 +22,7 @@ jobs:
             -v "$PWD"/dagster/Dockerfile:/dockerfilelinter/Dockerfile \
             petitnuage/dockerfile-linter:latest \
             linter \
-            -i EC0001,EF0004,ER0001,ER0007,ER0012 \
+            -i EC0001,EF0004,ER0001,ER0007,ER0012,ER0013 \
             -f Dockerfile
 
   validate-docker-compose-configuration:
