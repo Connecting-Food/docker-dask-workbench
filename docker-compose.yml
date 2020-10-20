@@ -1,88 +1,68 @@
 version: '3'
+
 services:
   dagster:
     build: dagster
     ports:
       - "3000:3000"
     depends_on:
-      - dagster_db
-      - datastore
-      - scheduler
+      - dask-scheduler
+      - minio
+      - postgres
     volumes:
       - ./dagster:/dagster
     env_file:
-      - datastore/.env
-      - dagster-db/.env
+      - minio/.env
+      - postgres/.env
 
-  dagster_db:
-    image: postgres:10-alpine
-    env_file:
-      - dagster-db/.env
-    volumes:
-      - ./dagster-db/pg_data:/var/lib/postgresql/data
-
-  scheduler:
+  dask-scheduler:
     image: daskdev/dask
     command: ["dask-scheduler"]
     ports:
       - "8786:8786"
       - "8787:8787"
     env_file:
-      - datastore/.env
+      - minio/.env
       - postgres/.env
     depends_on:
-      - db
-      - datastore
+      - minio
+      - postgres
 
-  worker:
+  dask-worker:
     image: daskdev/dask
     command: [
       "dask-worker",
       "tcp://scheduler:8786"
     ]
     env_file:
-      - datastore/.env
+      - minio/.env
       - postgres/.env
     depends_on:
-      - scheduler
+      - dask-scheduler
 
-  notebook:
-    image: daskdev/dask-notebook
-    depends_on:
-      - scheduler
-      - db
-      - datastore
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./notebook:/app
-    env_file:
-      - datastore/.env
-      - postgres/.env
-
-  datastore:
+  minio:
     image: minio/minio
     command: [
       "server",
       "/datastore"
     ]
     env_file:
-      - datastore/.env
+      - minio/.env
     volumes:
-      - ./datastore:/datastore
+      - ./minio:/datastore
     ports:
       - "9000:9000"
 
-  db:
+  postgres:
     image: mdillon/postgis
     env_file:
       - postgres/.env
     volumes:
       - ./postgres/pg_data:/var/lib/postgresql/data
 
-  db_admin:
+  adminer:
     image: adminer
     ports:
       - '8080:8080'
     depends_on:
-      - db
+      - postgres
